@@ -262,7 +262,7 @@
 			if(prob(force_say_chance))
 				human_target.force_say()
 		var/armour_block = target.run_armor_check(null, armour_type_against_stun, null, null, stun_armour_penetration)
-		target.apply_damage(stamina_damage, STAMINA, blocked = armour_block)
+		target.apply_damage(stamina_damage * (HAS_TRAIT(target, TRAIT_BATON_RESISTANCE) ? 0.75 : 1), STAMINA, blocked = armour_block) // NOVA EDIT CHANGE - ORIGINAL: target.apply_damage(stamina_damage, STAMINA, blocked = armour_block) - Repurposes the effect of baton resistance to nullify a fourth of incoming stamina damage before stun armor is applied, so that those who've prepared benefit accordingly.
 		if(!trait_check)
 			target.Knockdown((isnull(stun_override) ? knockdown_time : stun_override))
 		additional_effects_non_cyborg(target, user)
@@ -693,11 +693,11 @@
  * After a period of time, we then check to see what stun duration we give.
  */
 /obj/item/melee/baton/security/additional_effects_non_cyborg(mob/living/target, mob/living/user)
-	target.set_jitter_if_lower(40 SECONDS)
+	target.set_jitter_if_lower(40 SECONDS* (HAS_TRAIT(target, TRAIT_BATON_RESISTANCE) ? 0.5 : 1)) // NOVA CHANGE - ORIGINAL: target.set_jitter_if_lower(40 SECONDS) - Baton resistance halves jitter.
 	// target.set_confusion_if_lower(10 SECONDS) // NOVA EDIT REMOVAL
-	target.set_stutter_if_lower(16 SECONDS)
-
+	target.set_stutter_if_lower(16 SECONDS* (HAS_TRAIT(target, TRAIT_BATON_RESISTANCE) ? 0.5 : 1)) // NOVA CHANGE - ORIGINAL: target.set_stutter_if_lower(16 SECONDS) - Baton resistance halves stutter.
 	SEND_SIGNAL(target, COMSIG_LIVING_MINOR_SHOCK)
+/* // NOVA EDIT REMOVAL START
 	addtimer(CALLBACK(src, PROC_REF(apply_stun_effect_end), target), 2 SECONDS)
 
 /// After the initial stun period, we check to see if the target needs to have the stun applied.
@@ -708,6 +708,7 @@
 
 	if(!trait_check)
 		target.Knockdown(knockdown_time)
+*/ // NOVA EDIT REMOVAL END
 
 /obj/item/melee/baton/security/get_stun_description(mob/living/target, mob/living/user)
 	. = list()
