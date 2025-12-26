@@ -1020,7 +1020,7 @@
 
 /obj/item/mod/module/shock_absorber
 	name = "MOD shock absorption module"
-	desc = "A module that makes the user resistant to the effects of incapacitating, baton-based weaponry." // NOVA EDIT CHANGE - ORIGINAL: "A module that makes the user resistant to the knockdown inflicted by Stun Batons." - Stun batons don't inflict knockdown, this module instead making the user take 25% less stamina damage from any baton.
+	desc = "A module that makes the user resistant to the effects of incapacitating, baton-based weaponry." // NOVA EDIT CHANGE - ORIGINAL: "A module that makes the user resistant to the knockdown inflicted by Stun Batons." - This module instead now making the user take 25% less stamina damage from any baton, as well as resisting knockdown.
 	icon_state = "no_baton"
 	complexity = 1
 	use_energy_cost = DEFAULT_CHARGE_DRAIN
