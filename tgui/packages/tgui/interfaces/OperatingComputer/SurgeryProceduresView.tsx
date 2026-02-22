@@ -59,16 +59,24 @@ export const SurgeryProceduresView = (props: SurgeryProceduresViewProps) => {
     'catalog_sort_type',
     'default',
   );
-  const [filterRobotic, setFilterRobotic] = useSharedState(
-    'catalog_filter',
-    false,
+    const [filterType, setFilterType] = useSharedState<'none'| 'synthetic' |
+     'organic'>(
+    'catalog_filter_type',
+    'none',
   );
   const rawSurgeryList =
     searchedSurgeries.length > 0 ? searchedSurgeries : surgeries;
 
   const surgeryList = rawSurgeryList
     .filter((surgery) => surgery.show_in_list)
-    .filter((surgery) => !filterRobotic || !surgery.mechanic)
+    .filter((surgery) => {
+      if (filterType === 'organic') {
+        return !surgery.mechanic;
+      } else if (filterType === 'synthetic') {
+        return surgery.mechanic;
+      }
+      return true; // Show all if no filter
+    })
     .filter(
       (surgery, index, self) =>
         index === self.findIndex((s) => s.name === surgery.name),
@@ -112,12 +120,20 @@ export const SurgeryProceduresView = (props: SurgeryProceduresViewProps) => {
             onChange={setSearchText}
           />
           <Button
+            width="85px"
             icon="filter"
-            tooltip="Filter out robotic surgeries."
-            onClick={() => setFilterRobotic(!filterRobotic)}
-            selected={filterRobotic}
+            tooltip="Cycle between specific classes of surgeries."
+            onClick={() =>
+              setFilterType(
+                filterType === 'none'
+                  ? 'organic'
+                  : filterType === 'organic'
+                    ? 'synthetic'
+                    : 'none',
+              )
+            }
           >
-            Hide Mechanic
+            {capitalizeFirst(filterType)}
           </Button>
           <Button
             width="75px"
