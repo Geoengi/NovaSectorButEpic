@@ -59,24 +59,29 @@ export const SurgeryProceduresView = (props: SurgeryProceduresViewProps) => {
     'catalog_sort_type',
     'default',
   );
-    const [filterType, setFilterType] = useSharedState<'none'| 'synthetic' |
-     'organic'>(
+  /* const [filterRobotic, setFilterRobotic] = useSharedState(
+    'catalog_filter',
+    false, */ // NOVA EDIT REMOVAL
+  const [filterType, setFilterType] = // NOVA EDIT ADDITION START
+   useSharedState<'none'| 'synthetic' | 'organic'>(
     'catalog_filter_type',
-    'none',
+    'none', //NOVA EDIT ADDITION END
   );
   const rawSurgeryList =
     searchedSurgeries.length > 0 ? searchedSurgeries : surgeries;
 
   const surgeryList = rawSurgeryList
     .filter((surgery) => surgery.show_in_list)
-    .filter((surgery) => {
+    //.filter((surgery) => !filterRobotic || !surgery.mechanic) // NOVA EDIT
+    // REMOVAL
+    .filter((surgery) => { // NOVA EDIT ADDITION START
       if (filterType === 'organic') {
         return !surgery.mechanic;
       } else if (filterType === 'synthetic') {
         return surgery.mechanic;
       }
       return true; // Show all if no filter
-    })
+    }) // NOVA EDIT ADDITION END
     .filter(
       (surgery, index, self) =>
         index === self.findIndex((s) => s.name === surgery.name),
@@ -112,16 +117,23 @@ export const SurgeryProceduresView = (props: SurgeryProceduresViewProps) => {
       scrollable
       fill
       buttons={
-        <>
+        <Stack nowrap> {/* NOVA EDIT ADDITION*/}
           <Input
             width="215px"
+            mr={2} // NOVA EDIT ADDITION
+            ml={2} // NOVA EDIT ADDITION
             placeholder="Search..."
             value={searchText}
             onChange={setSearchText}
           />
           <Button
-            width="85px"
             icon="filter"
+            /* tooltip="Filter out robotic surgeries."
+            onClick={() => setFilterRobotic(!filterRobotic)}
+            selected={filterRobotic}
+          >
+            Hide Mechanic */ // NOVA EDIT REMOVAL
+            width="85px" // NOVA EDIT ADDITION START
             tooltip="Cycle between specific classes of surgeries."
             onClick={() =>
               setFilterType(
@@ -133,7 +145,7 @@ export const SurgeryProceduresView = (props: SurgeryProceduresViewProps) => {
               )
             }
           >
-            {capitalizeFirst(filterType)}
+            {capitalizeFirst(filterType)} {/* NOVA EDIT ADDITION END */}
           </Button>
           <Button
             width="75px"
@@ -151,7 +163,7 @@ export const SurgeryProceduresView = (props: SurgeryProceduresViewProps) => {
           >
             {capitalizeFirst(sortType)}
           </Button>
-        </>
+        </Stack> // NOVA EDIT ADDITION
       }
     >
       {surgeryList.map((surgery) => {
